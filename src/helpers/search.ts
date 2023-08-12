@@ -4,27 +4,21 @@ import 'dotenv/config'
 import supabase from '../supabase.js'
 
 const searchArgv = process.argv.findIndex((arg) => arg === '--text')
-
 if (!searchArgv) {
   throw new Error('Missing --text argument')
 }
-
 const text = process.argv[searchArgv + 1]
 
 const thresholdArgv = process.argv.findIndex((arg) => arg === '--threshold')
-
 if (!thresholdArgv) {
   throw new Error('Missing --threshold argument')
 }
-
 const threshold = Number(process.argv[thresholdArgv + 1])
 
 const countArgv = process.argv.findIndex((arg) => arg === '--count')
-
 if (!countArgv) {
   throw new Error('Missing --count argument')
 }
-
 const count = Number(process.argv[countArgv + 1])
 
 const generateEmbedding = await pipeline(

@@ -13,7 +13,9 @@
     "seed": "tsc && node ./dist/helpers/seed.js",
     "seed:verifications": "tsc && node ./dist/helpers/seed.js --verifications",
     "embeddings": "tsc && node ./dist/helpers/embeddings.js",
-    "search": "tsc && node ./dist/helpers/search.js"
+    "search": "tsc && node ./dist/helpers/search.js",
+    "casts-recommend": "tsc && node ./dist/helpers/casts-recommend.js",
+    "likes-recommend": "tsc && node ./dist/helpers/likes-recommend.js"
   },
   "dependencies": {
     "@standard-crypto/farcaster-js": "^5.5.2",

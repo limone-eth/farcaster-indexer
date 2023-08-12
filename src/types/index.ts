@@ -3,6 +3,8 @@ export interface MerkleResponse {
     casts?: Cast[]
     users?: Profile[]
     verifications?: Verification[]
+    user?: Profile
+    likes?: LikeReaction[]
   }
   next?: {
     cursor: string
@@ -126,4 +128,11 @@ export interface FlattenedVerification {
   fid: number
   address: string
   created_at: Date
+}
+
+export interface LikeReaction {
+  type: string
+  hash: string
+  castHash: string
+  reactor: Profile
 }

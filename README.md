@@ -138,6 +138,38 @@ yarn run search --text YOUR_TEXT --threshold 0.5 --count 10
 
 The `--text` parameter is the text you want to search for, the `--threshold` is the minimum similarity threshold you want to use, and the `--count` is the number of results you want to get.
 
+### Recommendation system
+
+The repository contains some useful helper scripts that can be used to create a recommendation system based on the embeddings.
+
+#### Recommendation based on past user casts
+
+The first script is `src/helpers/casts-recommend.ts`, which can be used to recommend users/casts to a user based on his past casts.
+
+The script takes the last 10 user casts and uses them to find recommended users/casts.
+
+To retrieve the recommended casts, you need to run the following command:
+
+```bash
+yarn run casts-recommend --threshold 0.8 --count 10 --recommendation-type casts
+```
+
+To get the users instead, simply change the the `--recommendation-type` parameter to `users`.
+
+#### Basic recommendation based on past user likes
+
+The second script is `src/helpers/likes-recommend.ts`, which can be used to recommend users/casts to a user based on his past liked casts.
+
+The script retrieves all the past liked casts and uses them to find recommended users/casts.
+
+To retrieve the recommended casts, you need to run the following command:
+
+```bash
+yarn run likes-recommend --threshold 0.8 --count 10 --recommendation-type casts
+```
+
+To get the users instead, simply change the the `--recommendation-type` parameter to `users`.
+
 ## How to deploy
 
 Create an empty [Supabase](https://supabase.com/) project and connect to the CLI. If you get a warning that says "Local config differs from linked project", update the `major_version` in [supabase/config.toml](supabase/config.toml) to `15`.
