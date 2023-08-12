@@ -4,6 +4,7 @@ import cron from 'node-cron'
 
 import { idRegistryAddr, idRegistryAbi } from './contracts/id-registry.js'
 import { IdRegistry, IdRegistryEvents } from './contracts/types/id-registry.js'
+import { generateEmbeddings } from './functions/generate-embeddings.js'
 import { indexAllCasts } from './functions/index-casts.js'
 import { indexVerifications } from './functions/index-verifications.js'
 import { upsertRegistrations } from './functions/read-logs.js'
@@ -44,6 +45,7 @@ await upsertRegistrations(provider, idRegistry)
 cron.schedule('* * * * *', async () => {
   await indexAllCasts(10_000)
   await updateAllProfiles()
+  await generateEmbeddings([], true)
 })
 
 // Run job every hour

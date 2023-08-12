@@ -8,6 +8,17 @@ export const generateEmbeddings = async (
   casts: Cast[],
   upsert: boolean = true
 ) => {
+  if (casts.length === 0) {
+    const { data: lastCasts } = await supabase
+      .from('casts')
+      .select()
+      .limit(10_000)
+
+    if (!lastCasts) {
+      throw new Error('No casts found')
+    }
+    casts = lastCasts
+  }
   const startTime = Date.now()
   const generateEmbedding = await pipeline(
     'feature-extraction',
