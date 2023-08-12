@@ -74,7 +74,7 @@ export async function indexAllCasts(limit?: number) {
  * @param limit The maximum number of casts to return. If not provided, all casts will be returned.
  * @returns An array of all casts on Farcaster
  */
-async function getAllCasts(limit?: number): Promise<Cast[]> {
+export async function getAllCasts(limit?: number): Promise<Cast[]> {
   const allCasts: Cast[] = new Array()
   let endpoint = buildCastEndpoint()
 
@@ -117,7 +117,7 @@ function buildCastEndpoint(cursor?: string): string {
   }`
 }
 
-function cleanCasts(casts: Cast[]): Cast[] {
+export function cleanCasts(casts: Cast[]): Cast[] {
   const cleanedCasts: Cast[] = new Array()
 
   for (const cast of casts) {

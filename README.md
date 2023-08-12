@@ -72,6 +72,72 @@ supabase
 
 See [full text search](https://supabase.com/docs/guides/database/full-text-search#creating-indexes) on Supabase for more details.
 
+## Generate embeddings
+
+To start generating embeddings for the Farcaster casts, you need to enable the **VECTOR** module on your Supabase database.
+
+After you've done so, you need to create a new table with the following schema:
+
+```sql
+create table if not exists
+  casts_embeddings (
+    cast_hash TEXT primary key,
+    embedding vector (384)
+  )
+```
+
+The table is also created via the migrations.
+
+When the table is created, you need to create a function called `match_casts` on the `public` schema:
+
+```sql
+create or replace function match_casts (
+  query_embedding vector(384),
+  match_threshold float,
+  match_count int
+)
+returns table (
+  cast_hash text,
+  similarity float
+)
+language sql stable
+as $$
+  select
+    casts_embeddings.cast_hash,
+    1 - (casts_embeddings.embedding <=> query_embedding) as similarity
+  from casts_embeddings
+  where 1 - (casts_embeddings.embedding <=> query_embedding) > match_threshold
+  order by similarity desc
+  limit match_count;
+$$;
+```
+
+This function uses the cosine similarity to find the most similar casts to the query.
+
+When the function is created, you need to create the index for the cosine similarity:
+
+```sql
+create index on casts_embeddings using ivfflat (embedding vector_cosine_ops) with (lists = 924);
+```
+
+The number after `list =` should be `# casts/1000` if less than 1M casts, otherwise it should be `sqrt(# casts)`.
+
+When you have correctly setup the database, you just need to start creating the embeddings (make sure to have the casts in your database before!):
+
+```bash
+yarn run embeddings
+```
+
+Generating the embeddings is a slow process, and may take a while based on the number of casts you have in your database.
+
+When the embeddings have been generated, you can start querying the database for similar casts:
+
+```bash
+yarn run search --text YOUR_TEXT --threshold 0.5 --count 10
+```
+
+The `--text` parameter is the text you want to search for, the `--threshold` is the minimum similarity threshold you want to use, and the `--count` is the number of results you want to get.
+
 ## How to deploy
 
 Create an empty [Supabase](https://supabase.com/) project and connect to the CLI. If you get a warning that says "Local config differs from linked project", update the `major_version` in [supabase/config.toml](supabase/config.toml) to `15`.
