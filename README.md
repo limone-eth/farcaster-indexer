@@ -142,6 +142,8 @@ The `--text` parameter is the text you want to search for, the `--threshold` is 
 
 The repository contains some useful helper scripts that can be used to create a recommendation system based on the embeddings.
 
+**NOTE**: The following recommendation scripts are only examples of what can be done using the stored embeddings. They are not meant to be used in production, and may not even be the best way to create a recommendation system.
+
 #### Recommendation based on past user casts
 
 The first script is `src/helpers/casts-recommend.ts`, which can be used to recommend users/casts to a user based on his past casts.
