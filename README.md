@@ -82,17 +82,19 @@ After you've done so, you need to create a new table with the following schema:
 create table if not exists
   casts_embeddings (
     cast_hash TEXT primary key,
-    embedding vector (384)
+    embedding vector (384) /* vector(1536) for OpenAI embeddings */
   )
 ```
 
 The table is also created via the migrations.
 
+**NOTE:** If you want to store OpenAI embeddings, you need to change the `embedding` type to `vector(1536)`.
+
 When the table is created, you need to create a function called `match_casts` on the `public` schema:
 
 ```sql
 create or replace function match_casts (
-  query_embedding vector(384),
+  query_embedding vector(384), /* vector(1536) for OpenAI embeddings */
   match_threshold float,
   match_count int
 )
