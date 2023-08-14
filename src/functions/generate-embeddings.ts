@@ -11,7 +11,7 @@ export const generateEmbeddings = async (
   if (casts.length === 0) {
     const { data: lastCasts } = await supabase
       .from('casts')
-      .select()
+      .select().order("published_at", {ascending: false})
       .limit(10_000)
 
     if (!lastCasts) {
