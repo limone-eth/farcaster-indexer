@@ -7,3 +7,5 @@
 **/supabase/.branches
 **/supabase/.temp
 .vscode/
+.idea
+yarn-error.log
