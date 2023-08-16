@@ -136,3 +136,24 @@ export interface LikeReaction {
   castHash: string
   reactor: Profile
 }
+
+export interface FlattenedPoapEvent {
+  id: number;
+  event_name: string;
+  event_url: string;
+  start_date: string;
+  end_date: string;
+  country: string;
+  city: string;
+  image_extra_small: string;
+  image_small: string;
+  image_large: string;
+  image_medium: string;
+  image_original: string;
+}
+
+export interface FlattenedProfileHasPoap {
+  id: number;
+  profile_id: number;
+  event_id: string;
+}

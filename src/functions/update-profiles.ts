@@ -8,9 +8,9 @@ import { breakIntoChunks } from '../utils.js'
 /**
  * Reformat and upsert all profiles into the database
  */
-export async function updateAllProfiles() {
+export async function updateAllProfiles(getOnlyNewOnes = false) {
   const startTime = Date.now()
-  const allProfiles = await getAllProfiles()
+  const allProfiles = await getAllProfiles(getOnlyNewOnes)
 
   const formattedProfiles: FlattenedProfile[] = allProfiles.map((p) => {
     return {
@@ -52,7 +52,7 @@ export async function updateAllProfiles() {
  * Get all profiles from the Merkle API
  * @returns An array of all Farcaster profiles
  */
-async function getAllProfiles(): Promise<Profile[]> {
+async function getAllProfiles(getOnlyNewOnes = false): Promise<Profile[]> {
   const allProfiles: Profile[] = new Array()
   let endpoint = buildProfileEndpoint()
 
@@ -63,6 +63,15 @@ async function getAllProfiles(): Promise<Profile[]> {
     const profiles = response.result.users
 
     if (!profiles) throw new Error('No profiles found')
+
+    if (getOnlyNewOnes) {
+      const existingProfile = await supabase.from("profile").select("id").in("id", profiles.map(p => p.fid)).limit(1)
+      // If there are existing profiles, stop
+      // @ts-ignore
+      if (existingProfile && existingProfile.data.length > 0) {
+        break;
+      }
+    }
 
     for (const profile of profiles) {
       allProfiles.push(profile)
@@ -78,7 +87,7 @@ async function getAllProfiles(): Promise<Profile[]> {
   }
 
   // If there are missing ids (warpcast filtering), insert an empty profile
-  const maxId = allProfiles[0].fid
+  const maxId = allProfiles[0]?.fid
   for (let i = 1; i <= maxId; i++) {
     if (!allProfiles.find((p) => p.fid === i)) {
       allProfiles.push({

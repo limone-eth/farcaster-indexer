@@ -1,3 +1,5 @@
+import { DocumentNode } from '@apollo/client';
+
 /**
  * Break a large array into smaller chunks.
  * @param {array} array Array to break into smaller chunks
@@ -11,3 +13,8 @@ export function breakIntoChunks<T>(array: T[], chunkSize: number): T[][] {
   }
   return chunks
 }
+
+
+
+export const gqlToString = (gqlQuery: DocumentNode): string => gqlQuery.loc?.source.body || '';
+

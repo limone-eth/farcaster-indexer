@@ -1,17 +1,18 @@
 import got from 'got'
 
-import { MERKLE_REQUEST_OPTIONS } from '../merkle.js'
+import {MERKLE_REQUEST_OPTIONS} from '../merkle.js'
 import supabase from '../supabase.js'
-import { Cast, FlattenedCast, MerkleResponse } from '../types/index'
-import { breakIntoChunks } from '../utils.js'
+import {Cast, FlattenedCast, MerkleResponse} from '../types/index'
+import {breakIntoChunks} from '../utils.js'
 
 /**
  * Index the casts from all Farcaster profiles and insert them into Supabase
  * @param limit The max number of recent casts to index
+ * @param getOnlyNewOnes Only index casts that have not been indexed before
  */
-export async function indexAllCasts(limit?: number) {
+export async function indexAllCasts(limit?: number, getOnlyNewOnes = false): Promise<number> {
   const startTime = Date.now()
-  const allCasts = await getAllCasts(limit)
+  const allCasts = await getAllCasts(limit, getOnlyNewOnes)
   const cleanedCasts = cleanCasts(allCasts)
 
   const formattedCasts: FlattenedCast[] = cleanedCasts.map((c) => {
@@ -48,9 +49,10 @@ export async function indexAllCasts(limit?: number) {
 
   // Break formattedCasts into chunks of 1000
   const chunks = breakIntoChunks(formattedCasts, 1000)
-
+  let index = 0;
   // Upsert each chunk into the Supabase table
   for (const chunk of chunks) {
+    index += chunk.length;
     const { error } = await supabase.from('casts').upsert(chunk, {
       onConflict: 'hash',
     })
@@ -58,6 +60,7 @@ export async function indexAllCasts(limit?: number) {
     if (error) {
       throw error
     }
+    console.log(`Indexed ${index} casts`)
   }
 
   const endTime = Date.now()
@@ -67,6 +70,7 @@ export async function indexAllCasts(limit?: number) {
     // If it takes more than 60 seconds, log the duration so we can optimize
     console.log(`Updated ${formattedCasts.length} casts in ${duration} seconds`)
   }
+  return formattedCasts.length;
 }
 
 /**
@@ -74,7 +78,7 @@ export async function indexAllCasts(limit?: number) {
  * @param limit The maximum number of casts to return. If not provided, all casts will be returned.
  * @returns An array of all casts on Farcaster
  */
-export async function getAllCasts(limit?: number): Promise<Cast[]> {
+export async function getAllCasts(limit?: number, getOnlyNewOnes = false): Promise<Cast[]> {
   const allCasts: Cast[] = new Array()
   let endpoint = buildCastEndpoint()
 
@@ -85,6 +89,16 @@ export async function getAllCasts(limit?: number): Promise<Cast[]> {
     const casts = response.result.casts
 
     if (!casts) throw new Error('No casts found')
+
+
+    if (getOnlyNewOnes) {
+      const existingCast = await supabase.from("casts").select("hash").eq("hash", casts[casts.length - 1].hash).single()
+      // If we've already indexed these casts, stop
+      // @ts-ignore
+      if (existingCast.data) {
+        break;
+      }
+    }
 
     for (const cast of casts) {
       allCasts.push(cast)
