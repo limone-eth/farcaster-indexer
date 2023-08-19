@@ -91,7 +91,7 @@ export const fetchFarcasterUserPOAPs = async (
 
   // Fetch subsequent pages until there are no more pages
   while (shouldFetchNextPage) {
-    console.time('fetchFarcasterUserPOAPs');
+    // console.time('fetchFarcasterUserPOAPs');
     // Fetch the next page of data
     // eslint-disable-next-line no-await-in-loop
     response = await response!.getNextPage();
@@ -109,7 +109,7 @@ export const fetchFarcasterUserPOAPs = async (
 
     // Log the number of API calls (optional)
     // console.log(`${variables.farcasterFids} API calls: ${numCalls++}`);
-    console.timeEnd('fetchFarcasterUserPOAPs');
+    // console.timeEnd('fetchFarcasterUserPOAPs');
   }
 
   return allData;

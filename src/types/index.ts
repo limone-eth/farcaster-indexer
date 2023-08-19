@@ -145,11 +145,7 @@ export interface FlattenedPoapEvent {
   end_date: string;
   country: string;
   city: string;
-  image_extra_small: string;
-  image_small: string;
-  image_large: string;
-  image_medium: string;
-  image_original: string;
+  image_url: string;
 }
 
 export interface FlattenedProfileHasPoap {

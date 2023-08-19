@@ -8,11 +8,7 @@ CREATE TABLE IF NOT EXISTS public.poap_events
     end_date          varchar,
     country           varchar,
     city              varchar,
-    image_extra_small varchar,
-    image_small       varchar,
-    image_large       varchar,
-    image_medium      varchar,
-    image_original    varchar,
+    image_url         varchar,
     updated_at        timestamp with time zone DEFAULT now(),
     CONSTRAINT poap_events_pkey PRIMARY KEY (id)
 );
