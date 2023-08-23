@@ -7,6 +7,7 @@ import { IdRegistry } from './../contracts/types/id-registry.js'
 import { indexAllCasts } from './../functions/index-casts.js'
 import { upsertRegistrations } from './../functions/read-logs.js'
 import { updateAllProfiles } from './../functions/update-profiles.js'
+import {syncPoaps} from "./sync-poaps";
 
 // Set up the provider
 const ALCHEMY_SECRET = process.env.ALCHEMY_SECRET
@@ -32,5 +33,8 @@ if (process.argv.includes('--verifications')) {
   console.log('Seeding verifications from Merkle APIs...')
   await indexVerifications()
 }
+
+console.log('Seeding poaps from Airstack APIs...')
+await syncPoaps()
 
 console.log('Seeding complete!')

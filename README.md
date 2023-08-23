@@ -55,7 +55,7 @@ Postgres full text search is a lot more performant and robust than pattern match
 - ignore stop words (e.g. "the" and "a")
 - weight and rank results
 
-The data can be queried with SQL or the Supabase client. For example, the following code will match casts that contain either "farcaster" and "warpast" OR "activitypub" and "mastodon".
+The data can be queried with SQL or the Supabase client. For example, the following code will match casts that contain either "farcaster" and "warpcast" OR "activitypub" and "mastodon".
 
 ```sql
 SELECT *
@@ -190,3 +190,5 @@ supabase db push
 ```
 
 I recommend hosting the indexer on [Railway](https://railway.app?referralCode=ONtqGs).
+
+

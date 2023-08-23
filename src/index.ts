@@ -11,6 +11,7 @@ import { upsertRegistrations } from './functions/read-logs.js'
 import { updateAllProfiles } from './functions/update-profiles.js'
 import supabase from './supabase.js'
 import { FlattenedProfile } from './types/index.js'
+import {syncPoaps} from "./helpers/sync-poaps";
 
 // Set up the provider
 const ALCHEMY_SECRET = process.env.ALCHEMY_SECRET
@@ -46,6 +47,11 @@ cron.schedule('* * * * *', async () => {
   await indexAllCasts(10_000)
   await updateAllProfiles()
   await generateEmbeddings([], true)
+})
+
+// Run job every 6 hours
+cron.schedule('0 */6 * * *', async () => {
+  await syncPoaps()
 })
 
 // Run job every hour
