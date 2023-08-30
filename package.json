@@ -15,6 +15,7 @@
     "seed:verifications": "tsc && node ./dist/helpers/seed.js --verifications",
     "embeddings": "tsc && node ./dist/helpers/embeddings.js",
     "poaps": "tsc && node ./dist/helpers/sync-poaps.js",
+    "tokens": "tsc && node ./dist/helpers/sync-token-balances.js",
     "search": "tsc && node ./dist/helpers/search.js",
     "casts-recommend": "tsc && node ./dist/helpers/casts-recommend.js",
     "likes-recommend": "tsc && node ./dist/helpers/likes-recommend.js"

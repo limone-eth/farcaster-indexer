@@ -1,3 +1,5 @@
+import {TokenChain} from "../../../types";
+
 export interface Image {
   extraSmall: string;
   large: string;
@@ -10,6 +12,9 @@ export interface TokenNFT {
   tokenId: string;
   contentValue: {
     image: Image;
+  };
+  token: {
+    projectDetails: TokenNftProjectDetails;
   };
 }
 
@@ -24,7 +29,12 @@ export interface Owner {
 
 export interface TokenBalance {
   owner: Owner;
-  tokenNfts: TokenNFT[];
+  tokenNfts: TokenNFT;
+  amount: number;
+  tokenAddress: string;
+  tokenId: string;
+  tokenType: string;
+  blockchain: TokenChain;
 }
 
 export interface EthereumNFTData {
@@ -78,3 +88,54 @@ export interface FarcasterUserPOAPsAndNFTsResult {
 export interface FarcasterUserPOAPsAndNFTsVariables {
   farcasterFids: string[];
 }
+
+interface TokenNftImage {
+  medium: string;
+  original: string;
+}
+
+interface TokenNftProjectDetails {
+  collectionName: string;
+  imageUrl: string;
+  externalUrl: string;
+}
+
+interface TokenNft {
+  contentValue: {
+    image: TokenNftImage;
+  };
+  token: {
+    projectDetails: TokenNftProjectDetails;
+  };
+}
+
+interface TokenBalanceOwnerSocial {
+  profileName: string;
+  userId: string;
+  userAssociatedAddresses: string[];
+}
+
+interface TokenBalanceOwner {
+  socials: TokenBalanceOwnerSocial[];
+}
+
+interface PageInfo {
+  nextCursor: string | null;
+  prevCursor: string | null;
+}
+
+interface TokenBalancesData {
+  TokenBalance: TokenBalance[];
+  pageInfo: PageInfo;
+}
+
+interface FarcasterUserTokenBalancesResults {
+  Ethereum: TokenBalancesData;
+  Polygon: TokenBalancesData;
+}
+
+interface FarcasterUserTokenBalancesVariables {
+  farcasterFids: string[];
+}
+
+export {FarcasterUserTokenBalancesResults, FarcasterUserTokenBalancesVariables};

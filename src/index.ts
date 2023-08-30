@@ -11,7 +11,7 @@ import { upsertRegistrations } from './functions/read-logs.js'
 import { updateAllProfiles } from './functions/update-profiles.js'
 import supabase from './supabase.js'
 import { FlattenedProfile } from './types/index.js'
-import {syncPoaps} from "./helpers/sync-poaps";
+import {syncPoaps} from "./helpers/sync-poaps.js";
 
 // Set up the provider
 const ALCHEMY_SECRET = process.env.ALCHEMY_SECRET

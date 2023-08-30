@@ -153,3 +153,52 @@ export interface FlattenedProfileHasPoap {
   profile_id: number;
   event_id: string;
 }
+
+export enum TokenType {
+  ERC20 = 'ERC20',
+  ERC721 = 'ERC721',
+  ERC1155 = 'ERC1155',
+}
+
+export enum TokenChain {
+  ETHEREUM = 'ethereum',
+  POLYGON = 'polygon',
+  BASE = 'base',
+  ZORA = 'zora',
+}
+
+export interface Token {
+  address: string;
+  chain: TokenChain;
+  tokenId: string;
+  tokenType: TokenType;
+  imageUrl: string;
+  collectionName?: string;
+  collectionImageUrl?: string;
+  collectionExternalUrl?: string;
+}
+
+export interface FlattenedToken {
+  address: string;
+  token_chain: TokenChain;
+  token_id: string;
+  token_type: TokenType;
+  image_url: string;
+  collection_name?: string;
+  collection_image_url?: string;
+  collection_external_url?: string;
+  amount?: number;
+}
+
+export interface ProfileHasToken {
+  profileId: number;
+  tokenId: number; // not token.tokenId, but token.id so the sql references the token table
+  amount: number;
+
+}
+
+export interface FlattenedProfileHasToken {
+  profile_id: number;
+  token_id: number;
+  amount: number;
+}
