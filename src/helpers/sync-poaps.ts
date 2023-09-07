@@ -174,5 +174,3 @@ function convertToFlattenedPoapEvent(poap: Poap): FlattenedPoapEvent {
         image_url: image?.medium ?? null,
     };
 }
-
-syncPoaps().catch(console.error).then(() => process.exit(0));

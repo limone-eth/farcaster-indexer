@@ -7,7 +7,8 @@ import { IdRegistry } from './../contracts/types/id-registry.js'
 import { indexAllCasts } from './../functions/index-casts.js'
 import { upsertRegistrations } from './../functions/read-logs.js'
 import { updateAllProfiles } from './../functions/update-profiles.js'
-import {syncPoaps} from "./sync-poaps";
+import {syncPoaps} from "./sync-poaps.js";
+import {syncProfilesOnPinecone} from "./pinecone/index.js";
 
 // Set up the provider
 const ALCHEMY_SECRET = process.env.ALCHEMY_SECRET
@@ -24,14 +25,19 @@ console.log('Seeding recent registrations from contract logs...')
 await upsertRegistrations(provider, idRegistry)
 
 console.log('Seeding profiles from Merkle APIs...')
-await updateAllProfiles()
+const profiles = await updateAllProfiles()
 
 console.log('Seeding casts from Merkle APIs...')
-await indexAllCasts()
+const casts = await indexAllCasts()
 
 if (process.argv.includes('--verifications')) {
   console.log('Seeding verifications from Merkle APIs...')
   await indexVerifications()
+}
+
+if (process.argv.includes('--pinecone')) {
+    console.log('Syncing profiles to Pinecone APIs...')
+    await syncProfilesOnPinecone(profiles, casts)
 }
 
 console.log('Seeding poaps from Airstack APIs...')

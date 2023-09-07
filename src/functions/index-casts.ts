@@ -10,7 +10,7 @@ import {breakIntoChunks} from '../utils.js'
  * @param limit The max number of recent casts to index
  * @param getOnlyNewOnes Only index casts that have not been indexed before
  */
-export async function indexAllCasts(limit?: number, getOnlyNewOnes = false): Promise<number> {
+export async function indexAllCasts(limit?: number, getOnlyNewOnes = false): Promise<FlattenedCast[]> {
   const startTime = Date.now()
   const allCasts = await getAllCasts(limit, getOnlyNewOnes)
   const cleanedCasts = cleanCasts(allCasts)
@@ -70,7 +70,7 @@ export async function indexAllCasts(limit?: number, getOnlyNewOnes = false): Pro
     // If it takes more than 60 seconds, log the duration so we can optimize
     console.log(`Updated ${formattedCasts.length} casts in ${duration} seconds`)
   }
-  return formattedCasts.length;
+  return formattedCasts;
 }
 
 /**

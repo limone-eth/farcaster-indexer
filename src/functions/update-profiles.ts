@@ -46,13 +46,15 @@ export async function updateAllProfiles(getOnlyNewOnes = false) {
     // If it takes more than 60 seconds, log the duration so we can optimize
     console.log(`Updated ${allProfiles.length} profiles in ${duration} seconds`)
   }
+
+  return formattedProfiles;
 }
 
 /**
  * Get all profiles from the Merkle API
  * @returns An array of all Farcaster profiles
  */
-async function getAllProfiles(getOnlyNewOnes = false): Promise<Profile[]> {
+export async function getAllProfiles(getOnlyNewOnes = false): Promise<Profile[]> {
   const allProfiles: Profile[] = new Array()
   let endpoint = buildProfileEndpoint()
 

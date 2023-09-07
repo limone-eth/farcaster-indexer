@@ -13,6 +13,8 @@
     "seed": "tsc && node ./dist/helpers/seed.js",
     "seed-only-new": "tsc && node ./dist/helpers/seed-only-new.js",
     "seed:verifications": "tsc && node ./dist/helpers/seed.js --verifications",
+    "seed:pinecone": "tsc && node ./dist/helpers/seed.js --pinecone",
+    "pinecone": "tsc && node ./dist/helpers/pinecone-embeddings.js",
     "embeddings": "tsc && node ./dist/helpers/embeddings.js",
     "poaps": "tsc && node ./dist/helpers/sync-poaps.js",
     "tokens": "tsc && node ./dist/helpers/sync-token-balances.js",
@@ -30,7 +32,10 @@
     "ethers": "^5.7.2",
     "got": "^11.8.2",
     "node-cron": "3.0.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "@pinecone-database/pinecone": "^0.1.6",
+    "cohere-ai": "^5.1.0",
+    "langchain": "^0.0.138"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",

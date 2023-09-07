@@ -11,8 +11,8 @@ export const syncTokenBalances = async () => {
     await init(process.env.AIRSTACK_API_KEY!, 'dev');
     const profiles = await supabase.from('profile').select("id", {count: 'exact', head: true});
     console.log(`[SYNCING TOKEN BALANCES] Total profiles: ${JSON.stringify(profiles.count)}`);
-    let page = 0;
-    let limit = 10;
+    let page = 90;
+    let limit = 50;
     let doMore = true;
     do {
         // there will be #profiles / limit pages to process
@@ -156,10 +156,10 @@ function convertToFlattenedToken(tokenBalance: TokenBalance): FlattenedToken {
 
     // Create a flattened POAP event object
     return {
-        image_url: tokenNfts.contentValue?.image?.medium ?? null,
-        collection_external_url: tokenNfts.token?.projectDetails?.externalUrl ?? null,
-        collection_name: tokenNfts.token?.projectDetails.collectionName ?? null,
-        collection_image_url: tokenNfts.token?.projectDetails?.imageUrl ?? null,
+        image_url: tokenNfts?.contentValue?.image?.medium ?? null,
+        collection_external_url: tokenNfts?.token?.projectDetails?.externalUrl ?? null,
+        collection_name: tokenNfts?.token?.projectDetails.collectionName ?? null,
+        collection_image_url: tokenNfts?.token?.projectDetails?.imageUrl ?? null,
         token_id: tokenId,
         token_type: tokenType as TokenType,
         address: tokenAddress,

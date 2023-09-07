@@ -202,3 +202,19 @@ export interface FlattenedProfileHasToken {
   token_id: number;
   amount: number;
 }
+
+export interface FlattenedProfileWithCasts {
+  id: number
+  owner?: string | null
+  username?: string | null
+  display_name?: string | null
+  avatar_url?: string | null
+  avatar_verified?: boolean | null
+  followers?: number | null
+  following?: number | null
+  bio?: string | null
+  referrer?: string | null
+  registered_at?: Date
+  updated_at?: Date
+  casts: FlattenedCast[]
+}
