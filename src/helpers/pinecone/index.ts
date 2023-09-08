@@ -1,11 +1,12 @@
 import {FlattenedCast, FlattenedProfile, FlattenedProfileWithCasts} from "../../types";
 import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
 import {PineconeClient} from "@pinecone-database/pinecone";
-import {CohereEmbeddings} from "langchain/embeddings";
+import {pipeline} from "@xenova/transformers";
 
 const PINECONE_INDEX = "findcaster"
 
-const MODEL_NAME = 'embed-english-v2.0';
+// const MODEL_NAME = 'embed-english-v2.0';
+const MODEL_NAME = 'feature-extraction';
 
 export const syncProfilesOnPinecone = async (profiles: FlattenedProfile[], casts: FlattenedCast[], chunkSize = 10) => {
     const chunks = chunkArray(profiles, chunkSize);
@@ -56,22 +57,28 @@ export const syncProfileToPinecone = async (profile: FlattenedProfileWithCasts) 
     );
 
     const pineconeIndex = pinecone.Index(PINECONE_INDEX);
+    const generateEmbedding = await pipeline(
+        MODEL_NAME,"Xenova/paraphrase-albert-small-v2"
+    )
+    const embeddings: number[][] = await Promise.all(
+        docs.map(async (doc) => {
+            const output = await generateEmbedding(doc.pageContent, {
+                pooling: 'mean',
+                normalize: true,
+            })
 
-    const embeddings = new CohereEmbeddings({
-        modelName: MODEL_NAME,
-        apiKey: process.env.COHERE_API_KEY, // In Node.js defaults to process.env.COHERE_API_KEY
-        batchSize: 48, // Default value if omitted is 48. Max value is 96
-    });
-    const embeddingArrays = (await embeddings.embedDocuments(docs.map((doc) => doc.pageContent))).filter(Boolean);
+            return Array.from(output.data)
+        })
+    )
 
     // Upsert the generated vectors
     const batch = [];
     for (let index = 0; index < docs.length; index++) {
         const chunk = docs[index];
-        if (embeddingArrays[index]?.length === 4096 ) {
+        if (embeddings[index]?.length === 4096 ) {
             const vector = {
                 id: `${profile.id}_${index}`,
-                values: embeddingArrays[index],
+                values: embeddings[index],
                 metadata: {
                     ...chunk.metadata,
                     loc: JSON.stringify(chunk.metadata.loc),
@@ -87,7 +94,7 @@ export const syncProfileToPinecone = async (profile: FlattenedProfileWithCasts) 
                     },
                 });
             } catch (e) {
-                console.error("Error upserting vectors: ", {e, data: embeddingArrays});
+                console.error("Error upserting vectors: ", {e, data: embeddings});
             }
         }
     }

@@ -25,7 +25,7 @@ const formattedProfiles: FlattenedProfile[] = allProfiles.map((p) => {
 
 console.log("Fetching casts...")
 
-const allCasts = await getAllCasts(undefined)
+const allCasts = await getAllCasts(100000)
 
 const cleanedCasts = cleanCasts(allCasts)
 
