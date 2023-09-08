@@ -75,7 +75,7 @@ export const syncProfileToPinecone = async (profile: FlattenedProfileWithCasts) 
     const batch = [];
     for (let index = 0; index < docs.length; index++) {
         const chunk = docs[index];
-        if (embeddings[index]?.length === 4096 ) {
+        if (embeddings[index]?.length === 768 ) {
             const vector = {
                 id: `${profile.id}_${index}`,
                 values: embeddings[index],
@@ -88,13 +88,16 @@ export const syncProfileToPinecone = async (profile: FlattenedProfileWithCasts) 
             };
             batch.push(vector);
             try {
-                await pineconeIndex.upsert({
-                    upsertRequest: {
-                        vectors: batch,
-                    },
-                });
+                const batchChunks = chunkArray(batch, 90);
+                for (const batchChunk of batchChunks) {
+                    await pineconeIndex.upsert({
+                        upsertRequest: {
+                            vectors: batchChunk,
+                        },
+                    });
+                }
             } catch (e) {
-                console.error("Error upserting vectors: ", {e, data: embeddings});
+                console.error("Error upserting vectors: ", {e});
             }
         }
     }
