@@ -53,4 +53,4 @@ const formattedCasts: FlattenedCast[] = cleanedCasts.map((c) => {
 });
 
 console.log('Syncing profiles to Pinecone APIs...')
-await syncProfilesOnPinecone(formattedProfiles, formattedCasts, 100)
+await syncProfilesOnPinecone(formattedProfiles, formattedCasts, 10)
