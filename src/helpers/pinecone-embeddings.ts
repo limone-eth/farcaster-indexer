@@ -3,6 +3,7 @@ import supabase from "../supabase.js";
 import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
 import {PineconeClient} from "@pinecone-database/pinecone";
 import {pipeline} from "@xenova/transformers";
+
 // Helper function to chunk an array into smaller arrays
 function chunkArray<T>(arr: T[], chunkSize: number): T[][] {
     const chunks: T[][] = [];
@@ -26,28 +27,30 @@ export interface ProfileWithCast {
     all_casts_text: string;
 }
 export const fetchProfilesWithCasts = async (page: number = 1, limit: number = 100): Promise<ProfileWithCast[]> => {
-    const {data, error} = await supabase.rpc('get_latest_casts', {limit_count: 25}).range(page, page + limit)
+    const {data, error} = await supabase.rpc('get_latest_casts', {limit_count: 50}).range(page, page + limit)
     if (error) throw error
     return data as ProfileWithCast[]
 }
 
+// Get Pinecone index
+const pinecone = new PineconeClient();
+await pinecone.init({
+    environment: 'gcp-starter',
+    apiKey: process.env.PINECONE_KEY!,
+});
+
 export const syncOnPinecone = async (profile: ProfileWithCast) => {
     console.log(`Syncing ${profile.profile_id}...`)
-    // Get Pinecone index
-    const pinecone = new PineconeClient();
-    await pinecone.init({
-        environment: 'gcp-starter',
-        apiKey: process.env.PINECONE_KEY!,
-    });
+
 
     // Split text into docs
     const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 500,
-        chunkOverlap: 0,
+        chunkSize: 2000,
+        chunkOverlap: 200,
     });
 
     const docs = await textSplitter.createDocuments(
-        [profile.all_casts_text!, profile.profile_bio!, profile.profile_username!, profile.profile_display_name!].filter(Boolean),
+        [profile.profile_username!, profile.profile_display_name!, profile.profile_bio!, profile.all_casts_text!].filter(Boolean),
         []
     );
 
@@ -70,7 +73,6 @@ export const syncOnPinecone = async (profile: ProfileWithCast) => {
     const batch = [];
     for (let index = 0; index < docs.length; index++) {
         const chunk = docs[index];
-        if (embeddings[index]?.length === 768 ) {
             const vector = {
                 id: `${profile.profile_id}_${index}`,
                 values: embeddings[index],
@@ -95,7 +97,6 @@ export const syncOnPinecone = async (profile: ProfileWithCast) => {
                 console.error("Error upserting vectors: ", {e});
             }
         }
-    }
 }
 
 const fetchAllProfiles = async () => {
@@ -123,5 +124,3 @@ const profileChunks = chunkArray(profiles, 10)
 for (const profileChunk of profileChunks) {
     await Promise.all(profileChunk.map(syncOnPinecone))
 }
-
-console.log(profiles)

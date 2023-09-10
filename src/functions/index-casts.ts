@@ -133,7 +133,6 @@ function buildCastEndpoint(cursor?: string): string {
 
 export function cleanCasts(casts: Cast[]): Cast[] {
   const cleanedCasts: Cast[] = new Array()
-
   for (const cast of casts) {
     // Remove recasts
     if (cast.text.startsWith('recast:farcaster://')) continue
